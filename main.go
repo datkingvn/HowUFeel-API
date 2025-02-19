@@ -1,15 +1,28 @@
 package main
 
 import (
-	"fmt"
+	"HowUFeel-API-Prj/configs"
+	"HowUFeel-API-Prj/helpers"
+	"HowUFeel-API-Prj/routes"
+	"github.com/gin-gonic/gin"
+	"log"
+	"os"
 )
 
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
-
 func main() {
-	//TIP <p>Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined text
-	// to see how GoLand suggests fixing the warning.</p><p>Alternatively, if available, click the lightbulb to view possible fixes.</p>
-	s := "HowUFeel"
-	fmt.Printf("Welcome to my application, %s!\n", s)
+	secret := configs.GenerateRandomKey()
+	helpers.SetJWTSecretKey(secret)
+
+	r := gin.Default()
+	
+	routes.UserRoutes(r)
+
+	// Start server
+	var port string
+	if port = os.Getenv("PORT"); port == "" {
+		log.Println("PORT environment variable not found, defaulting to 8080")
+		port = "8080"
+	}
+	r.Run(":" + port)
+	log.Println("Sever running on port: ", port)
 }
